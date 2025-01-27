@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="shortcut icon" type="image/png" href="/logo.png" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      defer
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+
+    <script defer src="script.js"></script>
+    <title>Next Destination</title>
+  </head>
+  <body>
+    <div class="sidebar">
+      <div class="imageflex">
+        <img src="logo.png" alt="Logo" class="logo" />
+        <h1 class="nextD-logo">Next Destination</h1>
+      </div>
+
+      <ul class="destinations">
+        <form class="form hidden">
+          <div class="form__row">
+            <label class="form__label">From:</label>
+            <select class="form__input form__input--type">
+              <option value="your">Your location</option>
+              <option value="other">Other location</option>
+            </select>
+          </div>
+          <div class="form__row form__row--hidden">
+            <label class="form__label">Where?:</label>
+            <input
+              class="form__input form__input--where"
+              placeholder="Select Location"
+            />
+          </div>
+
+          <div class="form__row">
+            <label class="form__label">Date:</label>
+            <input type="date" class="date" name="trip-start" value="" min="" />
+          </div>
+
+          <button class="form__btn">OK</button>
+        </form>
+
+        <!-- <li class="destination destination--running" data-id="1234567890">
+          <h2 class="destination__title">Running on April 14</h2>
+          <div class="destination__details">
+            <span class="destination__icon">🏃‍♂️</span>
+            <span class="destination__value">5.2</span>
+            <span class="destination__unit">km</span>
+          </div>
+          <div class="destination__details">
+            <span class="destination__icon">⏱</span>
+            <span class="destination__value">24</span>
+            <span class="destination__unit">min</span>
+          </div>
+          <div class="destination__details">
+            <span class="destination__icon">⚡️</span>
+            <span class="destination__value">4.6</span>
+            <span class="destination__unit">min/km</span>
+          </div>
+          <div class="destination__details">
+            <span class="destination__icon">🦶🏼</span>
+            <span class="destination__value">178</span>
+            <span class="destination__unit">spm</span>
+          </div>
+        </li>
+
+        <li class="destination destination--cycling" data-id="1234567891">
+          <h2 class="destination__title">Cycling on April 5</h2>
+          <div class="destination__details">
+            <span class="destination__icon">🚴‍♀️</span>
+            <span class="destination__value">27</span>
+            <span class="destination__unit">km</span>
+          </div>
+          <div class="destination__details">
+            <span class="destination__icon">⏱</span>
+            <span class="destination__value">95</span>
+            <span class="destination__unit">min</span>
+          </div>
+          <div class="destination__details">
+            <span class="destination__icon">⚡️</span>
+            <span class="destination__value">16</span>
+            <span class="destination__unit">km/h</span>
+          </div>
+          <div class="destination__details">
+            <span class="destination__icon">⛰</span>
+            <span class="destination__value">223</span>
+            <span class="destination__unit">m</span>
+          </div>
+        </li> -->
+      </ul>
+
+      <p class="copyright">
+        Made by
+        <a
+          class="twitter-link"
+          target="_blank"
+          href="https://www.linkedin.com/in/thiago-assis-de-carvalho-074626275/"
+          >Thiago Assis de Carvalho</a
+        >.
+      </p>
+    </div>
+
+    <div id="map"></div>
+  </body>
+</html>

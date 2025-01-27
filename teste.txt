@@ -1,0 +1,54 @@
+<ul class="destinations">
+        <form class="form hidden">
+          <div class="form__row">
+            <label class="form__label"
+              >From: <input list="locals" name="myLocation"
+            /></label>
+            <datalist id="options">
+              <option value=""></option>
+            </datalist>
+          </div>
+          <div class="form__row form__row--hidden">
+            <label class="form__label">Where?:</label>
+            <input
+              class="form__input form__input--where"
+              placeholder="Select Location"
+            />
+          </div>
+
+
+
+
+const form = document.querySelector(".form");
+const containerDestinations = document.querySelector(".destinations");
+const inputType = document.querySelector(".form__input--type");
+const inputWhere = document.querySelector(".form__input--where"); // Está hidden
+const inputTo = document.querySelector(".form__input--to");
+const inputTravelDate = document.querySelector(".date");
+inputTravelDate.setAttribute("min", today);
+inputTravelDate.setAttribute("value", today);
+
+
+.form__row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.form {
+  background-color: var(--color-dark--2);
+  border-radius: 5px;
+  padding: 1.5rem 2.75rem;
+  margin-bottom: 1.75rem;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 2.5rem;
+
+  /* Match height and activity boxes */
+  height: 9.25rem;
+  transition: all 0.5s, transform 1ms;
+  align-items: center;
+  align-content: center;
+}
