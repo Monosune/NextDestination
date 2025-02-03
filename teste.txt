@@ -1,32 +1,6 @@
-<ul class="destinations">
-        <form class="form hidden">
-          <div class="form__row">
-            <label class="form__label"
-              >From: <input list="locals" name="myLocation"
-            /></label>
-            <datalist id="options">
-              <option value=""></option>
-            </datalist>
-          </div>
-          <div class="form__row form__row--hidden">
-            <label class="form__label">Where?:</label>
-            <input
-              class="form__input form__input--where"
-              placeholder="Select Location"
-            />
-          </div>
 
 
 
-
-const form = document.querySelector(".form");
-const containerDestinations = document.querySelector(".destinations");
-const inputType = document.querySelector(".form__input--type");
-const inputWhere = document.querySelector(".form__input--where"); // Está hidden
-const inputTo = document.querySelector(".form__input--to");
-const inputTravelDate = document.querySelector(".date");
-inputTravelDate.setAttribute("min", today);
-inputTravelDate.setAttribute("value", today);
 
 
 .form__row {

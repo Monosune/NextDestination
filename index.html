@@ -39,18 +39,16 @@
       <ul class="destinations">
         <form class="form hidden">
           <div class="form__row">
-            <label class="form__label">From:</label>
-            <select class="form__input form__input--type">
-              <option value="your">Your location</option>
-              <option value="other">Other location</option>
-            </select>
-          </div>
-          <div class="form__row form__row--hidden">
-            <label class="form__label">Where?:</label>
-            <input
-              class="form__input form__input--where"
-              placeholder="Select Location"
-            />
+            <label
+              >From:
+              <input
+                list="places"
+                placeholder="City, State, Country"
+                name="thisPlace"
+            /></label>
+            <datalist id="places">
+              <option class="yourLocation" value=""></option>
+            </datalist>
           </div>
 
           <div class="form__row">
@@ -60,54 +58,6 @@
 
           <button class="form__btn">OK</button>
         </form>
-
-        <!-- <li class="destination destination--running" data-id="1234567890">
-          <h2 class="destination__title">Running on April 14</h2>
-          <div class="destination__details">
-            <span class="destination__icon">🏃‍♂️</span>
-            <span class="destination__value">5.2</span>
-            <span class="destination__unit">km</span>
-          </div>
-          <div class="destination__details">
-            <span class="destination__icon">⏱</span>
-            <span class="destination__value">24</span>
-            <span class="destination__unit">min</span>
-          </div>
-          <div class="destination__details">
-            <span class="destination__icon">⚡️</span>
-            <span class="destination__value">4.6</span>
-            <span class="destination__unit">min/km</span>
-          </div>
-          <div class="destination__details">
-            <span class="destination__icon">🦶🏼</span>
-            <span class="destination__value">178</span>
-            <span class="destination__unit">spm</span>
-          </div>
-        </li>
-
-        <li class="destination destination--cycling" data-id="1234567891">
-          <h2 class="destination__title">Cycling on April 5</h2>
-          <div class="destination__details">
-            <span class="destination__icon">🚴‍♀️</span>
-            <span class="destination__value">27</span>
-            <span class="destination__unit">km</span>
-          </div>
-          <div class="destination__details">
-            <span class="destination__icon">⏱</span>
-            <span class="destination__value">95</span>
-            <span class="destination__unit">min</span>
-          </div>
-          <div class="destination__details">
-            <span class="destination__icon">⚡️</span>
-            <span class="destination__value">16</span>
-            <span class="destination__unit">km/h</span>
-          </div>
-          <div class="destination__details">
-            <span class="destination__icon">⛰</span>
-            <span class="destination__value">223</span>
-            <span class="destination__unit">m</span>
-          </div>
-        </li> -->
       </ul>
 
       <p class="copyright">

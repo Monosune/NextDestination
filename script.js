@@ -1,9 +1,5 @@
 "use strict";
 
-console.log(
-  "https://geocode.maps.co/reverse?lat=40.7558017&lon=-73.9787414&api_key=6792a487ad4ba553733388ahb137c60"
-);
-
 // prettier-ignore
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -23,61 +19,48 @@ const calcDate = function () {
 };
 let today = calcDate();
 
+const form = document.querySelector(".form");
+const containerDestinations = document.querySelector(".destinations");
+const yourLocationInput = document.querySelector(".yourLocation");
+const fromInput = document.querySelector('input[name="thisPlace"]');
+const inputTo = document.querySelector(".form__input--to");
+const inputTravelDate = document.querySelector(".date");
+inputTravelDate.setAttribute("min", today);
+inputTravelDate.setAttribute("value", today);
+let yourCity;
+let destinationList = [];
+
 // --------------------------------------------------------------//
 // PARENT CLASS //
 class DestinationCl {
   id = (Date.now() + "").slice(-10);
+
   constructor(coords, travelDate) {
     this.coords = coords;
     this.travelDate = travelDate;
   }
-}
 
-// --------------------------------------------------------------//
-// CHILD CLASS //
-
-class YourLocation extends DestinationCl {
-  type = "your"; // Mudar tipo!
-
-  constructor(coords, travelDate) {
-    super(coords, travelDate);
-  }
-}
-
-class OtherLocation extends DestinationCl {
-  type = "other"; // Mudar tipo!
-
-  constructor(coords, travelDate, from) {
-    super(coords, travelDate);
-    this.from = from;
-  }
+  _deleteDestination() {}
 }
 
 // --------------------------------------------------------------//
 // APPLICATION FUNCTIONALITIES //
 
-const form = document.querySelector(".form");
-const containerDestinations = document.querySelector(".destinations");
-const inputType = document.querySelector(".form__input--type");
-const inputWhere = document.querySelector(".form__input--where"); // Está hidden
-const inputTo = document.querySelector(".form__input--to");
-const inputTravelDate = document.querySelector(".date");
-inputTravelDate.setAttribute("min", today);
-inputTravelDate.setAttribute("value", today);
-
 class Brain {
   #map;
-  #destinations = [];
+  #destinationsArray = [];
   #mapEvent; // #mapEvent will hold the information of your click location.
-  #formlist = [];
   #yourCoords;
 
   constructor() {
     this._getPosition();
 
+    // Get data from local storage
+    this._getLocalStorage();
+
     // Handling events.
-    form.addEventListener("submit", this._newDestiny.bind(this)); // It's necessary to bind the function to the class or else the "this" will be attatched to the form.
-    inputType.addEventListener("change", this._toggleOtherDestination);
+    form.addEventListener("submit", this._newDestObj.bind(this)); // It's necessary to bind the function to the class or else the "this" will be attatched to the form.
+
     containerDestinations.addEventListener(
       "click",
       this._moveToPopup.bind(this)
@@ -100,7 +83,7 @@ class Brain {
     const longitude = position.coords.longitude;
     this.#yourCoords = [latitude, longitude];
 
-    this.#map = L.map("map").setView(this.#yourCoords, 7);
+    this.#map = L.map("map").setView(this.#yourCoords, 6);
 
     L.tileLayer("https://{s}.tile.osm.org/{z}/{x}/{y}.png", {
       attribution:
@@ -111,112 +94,117 @@ class Brain {
     this.#map.on("click", this._showForm.bind(this));
 
     // Showing all markers on map
-    this.#destinations.forEach((local) => {
-      this._newDestinyMarker(local);
+    this.#destinationsArray.forEach((local) => {
+      this._newDestMarker(local);
     });
+    this._geocoding(this.#yourCoords, this._yourLocation);
   }
 
-  _findLocation() {}
+  _yourLocation(location) {
+    yourCity = location[0] + ", " + location[1] + ", " + location[2];
+    yourLocationInput.value = yourCity;
+  }
+
+  // Uses the desired position to get data from the location like city and country. Params must be a array with latitude and longitude values.
+  async _geocoding(destination, callback) {
+    let coords = Array.isArray(destination) ? destination : destination.coords;
+    let url = `https://geocode.maps.co/reverse?lat=${coords[0]}&lon=${coords[1]}&api_key=6792a487ad4ba553733388ahb137c60`;
+
+    const response = await fetch(url);
+    const json = await response.json();
+    const city = json.address.city;
+    const state = json.address.state;
+    const country = json.address.country;
+    const markedLocation = [city, state, country];
+
+    // this._flightInformations(markedLocation, "");
+
+    callback(markedLocation, destination);
+  }
 
   _showForm(mapE) {
     this.#mapEvent = mapE;
     form.classList.remove("hidden");
-    inputType.focus();
+    form.focus();
   }
 
-  // Creates new object
-  _newDestiny(e) {
-    // Data from form
-    const type = inputType.value;
-    const travelDate = inputTravelDate.value; // Mudar nome!
+  // Creates new DestinationCl object
+  _newDestObj(e) {
+    const travelDate = inputTravelDate.value; // Data from form
     const { lat, lng } = this.#mapEvent.latlng;
-    let destiny;
+    let destinationObj;
 
     e.preventDefault();
 
-    //If type of origin is "your" create YourLocation object
-    if (type === "your") {
-      destiny = new YourLocation([lat, lng], travelDate);
-      console.log(destiny);
+    if (fromInput.value != "") {
+      //Create YourLocation object
+      destinationObj = new DestinationCl([lat, lng], travelDate);
+
+      // Hide form
+      form.classList.add("hidden");
+
+      // Add new object to destination array
+      this.#destinationsArray.push(destinationObj);
+
+      // Render destination on map as marker
+      this._newDestMarker(destinationObj);
+
+      this._geocoding(destinationObj, this._displayList); // Passes informations from the object created to the geocoding and callback (_displayList) functions
+
+      // Set local storage to all workouts
+      this._setLocalStorage();
+    } else {
+      alert("You need to select your origin place");
     }
-
-    //If type of origin is "other" create OtherLocation object
-    if (type === "other") {
-      destiny = new OtherLocation([lat, lng], travelDate, inputWhere);
-    }
-
-    // Hide form
-    form.classList.add("hidden");
-
-    this.#destinations.push(destiny);
-    console.log(this.#destinations);
-
-    this._newDestinyMarker(destiny);
-
-    this._geocoding(destiny);
   }
 
   // Creates a new marker on selected position on map
-  _newDestinyMarker(destiny) {
-    L.marker(destiny.coords)
-      .addTo(this.#map)
-      .bindPopup("A pretty CSS popup.<br> Easily customizable.")
-      .openPopup();
+  _newDestMarker(destinationObj) {
+    L.marker(destinationObj.coords).addTo(this.#map).openPopup();
   }
 
   // Handles the HTML, displaying the informations of the travel aquired from the form.
-  _displayList(destiny, yourCity, otherCity) {
-    let trvDate = destiny.travelDate;
-    let trvDateMonth = Number(trvDate.split("-")[1]);
-    let trvDateDay = trvDate.split("-")[2];
-    let trvDateYear = trvDate.split("-")[0];
-
+  _displayList(markedLocation, destinationObj) {
+    let trvDate = destinationObj.travelDate.split("-");
+    let from = fromInput.value.split(",");
     // prettier-ignore
     let html = `
-        <div class="destination destination--${destiny.type}" data-id="${
-          destiny.id}">
+        <div class="destination" data-id="${
+          destinationObj.id}">
           <div>
-          <h2 class="destination__title">✈️Travel on ${months[trvDateMonth]} ${trvDateDay} ${trvDateYear}</h2>
+          <h2 class="destination__title">✈️Travel on ${months[Number(trvDate[1]) - 1]} ${trvDate[2]} ${trvDate[0]}</h2>
           </div>
           <div>
-          <button class="close">x</button>
+          <button class="close ${
+          destinationObj.id}">x</button>
           </div>
           <div class="destination__details">
             <span class="destination__icon">📍</span>
             <span class="destination__unit">From: </span>
-            <span class="destination__value">${
-              destiny.type === "your" ? yourCity : yourCity
-            }</span> 
+            <span class="destination__value">${from[0]}</span> 
           </div>
           <div class="destination__details">
             <span class="destination__icon">➡️</span>
             <span class="destination__unit">To: </span>
-            <span class="destination__value">${otherCity}</span>
+            <span class="destination__value">${markedLocation[0]}</span>
           </div>
         </div>`;
-    this.#formlist.push(html);
+    destinationList.push(html);
+    localStorage.setItem("destHtml", JSON.stringify(destinationList));
     form.insertAdjacentHTML("afterend", html);
-  }
-
-  _deleteDestination(e) {}
-
-  // Change informations on the form depending on your location. If you are traveling from your city or from another place.
-  _toggleOtherDestination() {
-    inputWhere.closest(".form__row").classList.toggle("form__row--hidden");
   }
 
   // When you click on any travel information on the form you will go to the assigned marker.
   _moveToPopup(e) {
-    console.log(e);
-    const destinyEl = e.target.closest(".destination");
+    const destinationEl = e.target.closest(".destination");
 
-    if (!destinyEl) return;
+    if (!destinationEl) return;
 
-    const destiny = this.#destinations.find(
-      (local) => local.id === destinyEl.dataset.id
+    const destination = this.#destinationsArray.find(
+      (local) => local.id === destinationEl.dataset.id
     );
 
-    this.#map.setView(destiny.coords, 13, {
+    this.#map.setView(destination.coords, 6, {
       animate: true,
       pan: {
         duration: 1,
@@ -224,32 +212,90 @@ class Brain {
     });
   }
 
-  // Uses the desired position to get data from the location like city and country.
-  async _geocoding(destiny) {
-    console.log(destiny.coords);
+  // _flightInformations(to, travelDate) {
+  //   // Link para pegar o código do aeroporto da cidade mais próxima de partida e de chegada: From e to
 
-    let yourUrl = `https://geocode.maps.co/reverse?lat=${
-      this.#yourCoords[0]
-    }&lon=${this.#yourCoords[1]}&api_key=6792a487ad4ba553733388ahb137c60`;
+  //   let from = fromInput.value.split(",");
 
-    let otherUrl = `https://geocode.maps.co/reverse?lat=${destiny.coords[0]}&lon=${destiny.coords[1]}&api_key=6792a487ad4ba553733388ahb137c60`;
+  //   // if (from != "") {
+  //   //   // prettier-ignore
+  //   //   let link = `https://www.travelmath.com/nearest-airport/${from[0].replaceAll(" ","+")},+${from[2].replaceAll(" ", "")}`;
+  //   //   // prettier-ignore
+  //   //   let linkTo = `https://www.travelmath.com/nearest-airport/${to[0].replaceAll(" ","+")},+${to[2]}`;
 
-    let yourResult;
-    let otherResult;
+  //   //   this._httpGet(link, this._pathEvaluator);
+  //   // }
 
-    await fetch(yourUrl)
-      .then((response) => response.json())
-      .then((response) => (yourResult = response))
-      .catch((error) => console.error("Error:", error));
-    const yourCity = yourResult.address.city;
+  //   // Link para pegar dados de valor da viagem, depende do markedLocation e travelDate
 
-    await fetch(otherUrl)
-      .then((response) => response.json())
-      .then((response) => (otherResult = response))
-      .catch((error) => console.error("Error:", error));
-    const otherCity = otherResult.address.city;
+  //   // let linkTravel = `www.decolar.com/shop/flights/results/oneway/BHZ/IPN/2026-01-16/1/0/0`;
+  // }
 
-    this._displayList(destiny, yourCity, otherCity);
+  // _httpGet(theUrl, callback) {
+  //   var xmlHttp = new XMLHttpRequest();
+  //   xmlHttp.onreadystatechange = function () {
+  //     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+  //       // Creates a HTML page
+  //       let reponseHTML = document.createElement("html");
+  //       reponseHTML.innerHTML = xmlHttp.responseText;
+  //       callback(reponseHTML);
+  //     }
+  //   };
+  //   xmlHttp.open("GET", theUrl, true);
+  //   xmlHttp.send(null);
+  // }
+
+  // _pathEvaluator(responseHTML, type) {
+  //   console.log(responseHTML);
+  //   try {
+  //     let refHref = "";
+  //     if (type == "google") {
+  //       refHref = responseHTML.querySelector(
+  //         "body>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>span>a"
+  //       ).href;
+  //       console.log(refHref);
+  //       document.querySelector(
+  //         ".your-reference"
+  //       ).innerHTML = `<p> Your reference:</p> <a target="_blank" href = ${refHref}> ${reference} > Your link </a>`;
+  //     } else if (type == "scholar") {
+  //       let query = responseHTML.querySelectorAll(
+  //         "body>div>div>div>div>div>div>div>h3>a"
+  //       );
+  //       document.querySelector(".your-reference").innerHTML = "";
+  //       for (let i = 0; i < query.length; i++) {
+  //         document.querySelector(
+  //           ".your-reference"
+  //         ).innerHTML += `<p> </p> <a target="_blank" href = ${
+  //           query[i].href
+  //         } > Your link .${i + 1} </a>`;
+  //       }
+  //     }
+  //   } catch {
+  //     document.querySelector(".your-reference").innerHTML =
+  //       "Oops... There as an error, try again.";
+  //   }
+  // }
+
+  _setLocalStorage() {
+    localStorage.setItem(
+      "destinations",
+      JSON.stringify(this.#destinationsArray)
+    );
+  }
+
+  _getLocalStorage() {
+    const data = JSON.parse(localStorage.getItem("destinations"));
+    const dataHtml = JSON.parse(localStorage.getItem("destHtml"));
+
+    if (!data) return;
+    if (!dataHtml) return;
+
+    this.#destinationsArray = data;
+    destinationList = dataHtml;
+
+    destinationList.forEach((html) => {
+      form.insertAdjacentHTML("afterend", html);
+    });
   }
 }
 
