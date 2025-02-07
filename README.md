@@ -1,4 +1,4 @@
-![alt text](./icon.png)
+![alt text](./logo.png)
 
 # NextDestination
  Next Destination is a project that allows you to mark and save on a map the next place you want to travel.
