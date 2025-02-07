@@ -39,8 +39,6 @@ class DestinationCl {
     this.coords = coords;
     this.travelDate = travelDate;
   }
-
-  _deleteDestination() {}
 }
 
 // --------------------------------------------------------------//
@@ -175,9 +173,6 @@ class Brain {
           <h2 class="destination__title">✈️Travel on ${months[Number(trvDate[1]) - 1]} ${trvDate[2]} ${trvDate[0]}</h2>
           </div>
           <div>
-          <button class="close ${
-          destinationObj.id}">x</button>
-          </div>
           <div class="destination__details">
             <span class="destination__icon">📍</span>
             <span class="destination__unit">From: </span>
@@ -211,70 +206,6 @@ class Brain {
       },
     });
   }
-
-  // _flightInformations(to, travelDate) {
-  //   // Link para pegar o código do aeroporto da cidade mais próxima de partida e de chegada: From e to
-
-  //   let from = fromInput.value.split(",");
-
-  //   // if (from != "") {
-  //   //   // prettier-ignore
-  //   //   let link = `https://www.travelmath.com/nearest-airport/${from[0].replaceAll(" ","+")},+${from[2].replaceAll(" ", "")}`;
-  //   //   // prettier-ignore
-  //   //   let linkTo = `https://www.travelmath.com/nearest-airport/${to[0].replaceAll(" ","+")},+${to[2]}`;
-
-  //   //   this._httpGet(link, this._pathEvaluator);
-  //   // }
-
-  //   // Link para pegar dados de valor da viagem, depende do markedLocation e travelDate
-
-  //   // let linkTravel = `www.decolar.com/shop/flights/results/oneway/BHZ/IPN/2026-01-16/1/0/0`;
-  // }
-
-  // _httpGet(theUrl, callback) {
-  //   var xmlHttp = new XMLHttpRequest();
-  //   xmlHttp.onreadystatechange = function () {
-  //     if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
-  //       // Creates a HTML page
-  //       let reponseHTML = document.createElement("html");
-  //       reponseHTML.innerHTML = xmlHttp.responseText;
-  //       callback(reponseHTML);
-  //     }
-  //   };
-  //   xmlHttp.open("GET", theUrl, true);
-  //   xmlHttp.send(null);
-  // }
-
-  // _pathEvaluator(responseHTML, type) {
-  //   console.log(responseHTML);
-  //   try {
-  //     let refHref = "";
-  //     if (type == "google") {
-  //       refHref = responseHTML.querySelector(
-  //         "body>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>div>span>a"
-  //       ).href;
-  //       console.log(refHref);
-  //       document.querySelector(
-  //         ".your-reference"
-  //       ).innerHTML = `<p> Your reference:</p> <a target="_blank" href = ${refHref}> ${reference} > Your link </a>`;
-  //     } else if (type == "scholar") {
-  //       let query = responseHTML.querySelectorAll(
-  //         "body>div>div>div>div>div>div>div>h3>a"
-  //       );
-  //       document.querySelector(".your-reference").innerHTML = "";
-  //       for (let i = 0; i < query.length; i++) {
-  //         document.querySelector(
-  //           ".your-reference"
-  //         ).innerHTML += `<p> </p> <a target="_blank" href = ${
-  //           query[i].href
-  //         } > Your link .${i + 1} </a>`;
-  //       }
-  //     }
-  //   } catch {
-  //     document.querySelector(".your-reference").innerHTML =
-  //       "Oops... There as an error, try again.";
-  //   }
-  // }
 
   _setLocalStorage() {
     localStorage.setItem(
